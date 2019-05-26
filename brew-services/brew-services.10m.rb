@@ -110,7 +110,7 @@ All
 end
 
 puts """
-[srv:#{started != 0 && BAR_COLORS ? green(started) : started}/#{total}]
+\e[1;30m[srv:#{started != 0 && BAR_COLORS ? green(started) : started}/#{total}]
 ---
 #{menus}
 ---
