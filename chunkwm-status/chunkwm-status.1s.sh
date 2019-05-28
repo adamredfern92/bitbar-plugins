@@ -34,7 +34,7 @@ do
 done
 
 desktop_list="${desktop_list/$(chunkc tiling::query --desktop id)/\e[30;47m$(chunkc tiling::query --desktop id)\e[0:40m\e[1;30m}"
-desktop_list="${desktop_list/F/\e[30;47mFf(chunkc tiling::query --desktop idf(chunkc tiling::query --desktop id))\e[0:40m\e[1;30m}"
+desktop_list="${desktop_list/F/\e[30;47mF\e[0:40m\e[1;30m}"
 
 printf "\e[1;30m[$(chunkc tiling::query --desktop mode | cut -c 1-3):$desktop_list ] | ansi=true \n"
 
