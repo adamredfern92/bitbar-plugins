@@ -29,7 +29,10 @@ do
     desktop_list="$desktop_list $(chunkc tiling::query --desktops-for-monitor $i)"
     if [ $(chunkc tiling::query --desktop id) -eq 0 ] && [ $(chunkc tiling::query --monitor id) -eq $i ]
     then
-        desktop_list="$desktop_list F"
+        desktop_list="$desktop_list F │"
+    elif [ $i -lt $monitor_count ]
+    then
+        desktop_list="$desktop_list │"
     fi
 done
 
