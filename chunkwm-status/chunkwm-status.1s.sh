@@ -21,25 +21,25 @@ elif [[ "$1" = "restart" ]]; then
 fi
 
 monitor_count=$(chunkc tiling::query --monitor count)
-desktop_list=""
+desktop_list="│"
 # echo "[$(chunkc tiling::query --desktop mode | cut -c 1-3):$(chunkc tiling::query --desktop id)]"
 
 for i in $(seq 1 $monitor_count)
 do
-    desktop_list="$desktop_list $(chunkc tiling::query --desktops-for-monitor $i)"
+    desktop_list="${desktop_list} $(chunkc tiling::query --desktops-for-monitor $i)"
     if [ $(chunkc tiling::query --desktop id) -eq 0 ] && [ $(chunkc tiling::query --monitor id) -eq $i ]
     then
-        desktop_list="$desktop_list F │"
+        desktop_list="${desktop_list} F │"
     elif [ $i -lt $monitor_count ]
     then
-        desktop_list="$desktop_list │"
+        desktop_list="${desktop_list} │"
     fi
 done
 
 desktop_list="${desktop_list/$(chunkc tiling::query --desktop id)/\e[30;47m$(chunkc tiling::query --desktop id)\e[0:40m\e[1;30m}"
 desktop_list="${desktop_list/F/\e[30;47mF\e[0:40m\e[1;30m}"
 
-printf "\e[1;30m[$(chunkc tiling::query --desktop mode | cut -c 1-3):$desktop_list ] | ansi=true \n"
+printf "\e[1;30m${desktop_list} │   [$(chunkc tiling::query --desktop mode | cut -c 1-3)] | ansi=true \n"
 
 echo "---"
 echo "Restart chunkwm & skhd | bash='$0' param1=restart terminal=false"
