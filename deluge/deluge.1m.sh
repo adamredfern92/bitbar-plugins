@@ -1,4 +1,5 @@
 #!/bin/sh
+
 config_dir="$HOME/Developer/bitbar/config-files"
 source "$config_dir/deluge.conf.sh"
 
@@ -11,6 +12,9 @@ downloading_only=true
 filter_words='REPACK iNTERNAL MULTi Repack'
 deluge_console="/Applications/Deluge.app/Contents/MacOS/deluge-console"
 connect="connect $deluge_ip_address $deluge_username $deluge_password"
+
+if [ $# -eq 0 ]
+then
 
 filter=''
 for word in $filter_words
@@ -30,10 +34,15 @@ else
     info_options=""
 fi
 
-/Applications/Deluge.app/Contents/MacOS/deluge-console "connect $deluge_ip_address $deluge_username $deluge_password; info $info_options; exit" > $tmpfile
+$deluge_console "$connect; info $info_options; exit" > $tmpfile
 echo "" >> $tmpfile
 
 summary=$(cat $tmpfile | grep State | cut -d' ' -f2 | sort | uniq -c | awk '{printf("%c%s/", $2, $1)}' | sed 's/\(.*\)\//\1/')
+
+if [ -z $summary ]
+then
+    exit 0
+fi
 
 echo "\033[1;30m[tor:$summary]\033[37m"
 
@@ -180,11 +189,19 @@ do
     echo "-----"
     if [ "$state" == "Paused" ]
     then
-        echo "--Resume"
+        echo "--Resume | bash=$0 param1=resume param2=$id"
     else
-        echo "--Pause"
+        echo "--Pause | bash=$0 param1=pause param2=$id"
     fi
 done < $tmpfile2
 
 echo "---"
 echo "Refresh | refresh=true"
+
+elif [ "$1" == "resume" ]
+then
+    $deluge_console "$connect; resume $2; exit"
+elif [ "$1" == "pause" ]
+then
+    $deluge_console "$connect; pause $2; exit"
+fi
