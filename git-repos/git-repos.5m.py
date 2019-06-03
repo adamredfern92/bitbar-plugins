@@ -78,8 +78,8 @@ for file in content:
         outdated_repos += 1
     else:
         add_text(direc_name + "| color=green")
-    add_text("--" + "Copy path | bash='echo "+direc+" | pbcopy '")
-    add_text("--" + "Open location | bash='open "+direc+"'")
+    add_text("--" + "Copy path | bash='echo "+direc+" | pbcopy ' terminal=false")
+    add_text("--" + "Open location | bash='open "+direc+"' terminal=false")
     add_text("--" + file)
     add_text("-----")
     add_text("--" + "Branches:")
