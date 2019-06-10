@@ -39,6 +39,7 @@ else
     if [[ "$currenttime" > "09:00" ]] && [[ "$currenttime" < "18:30" ]]
     then
         grep '^Work' $tmpfile2 | sed 's/^Work //' > $tmpfile
+        cat $tmpfile > $tmpfile2
     else
         grep -v '^Work' $tmpfile2 > $tmpfile
     fi
@@ -49,16 +50,22 @@ urgent_count=$(grep '^Urgent' $tmpfile | wc -l | tr -d ' ')
 
 echo "\033[1;30m[tdo:$urgent_count/$today_count]\033[37m"
 
-grep '^Urgent' $tmpfile | sed 's/Urgent/Today/' > $tmpfile2
+if [ $urgent_count -gt 0 ]
+then
+    grep '^Urgent' $tmpfile | sed 's/Urgent/Today/' > $tmpfile2
+    echo "---"
+    echo "Priority"
+    awk -F',' '/^Urgent/ {if ($5 == "missing value") printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n",$3,$4); else printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n--Due: %s%s\n",$3,$4,$5,$6)}' $tmpfile
 
-echo "---"
-echo "Priority"
-awk -F',' '/^Urgent/ {if ($5 == "missing value") printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n",$3,$4); else printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n--Due: %s%s\n",$3,$4,$5,$6)}' $tmpfile
+    echo "---"
+    echo "Available"
+    grep -v -f $tmpfile2 $tmpfile | awk -F',' '/^Today/ {if ($5 == "missing value") printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n",$3,$4); else printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n--Due: %s%s\n",$3,$4,$5,$6)}'
 
-echo "---"
-echo "Available"
-grep -v -f $tmpfile2 $tmpfile | awk -F',' '/^Today/ {if ($5 == "missing value") printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n",$3,$4); else printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n--Due: %s%s\n",$3,$4,$5,$6)}'
-
+else
+    echo "---"
+    echo "Available"
+    awk -F',' '/^Today/ {if ($5 == "missing value") printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n",$3,$4); else printf(" ☐ %s | bash=/usr/bin/open param1=omnifocus://task/%s terminal=false\n--Due: %s%s\n",$3,$4,$5,$6)}' $tmpfile
+fi
 
 prev_project=""
 echo "---"
